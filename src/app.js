@@ -5,6 +5,8 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const dotenv = require('dotenv');
 
+const authRoutes = require('./auth/auth.routes');
+
 class Server {
   async start() {
     this.initServer();
@@ -50,8 +52,8 @@ class Server {
   }
 
   initRoutes() {
-    this.server.use('/auth', null);
-    this.server.use('/test', null);
+    this.server.use('/auth', authRoutes);
+    // this.server.use('/test', null);
   }
 
   initErrorHandling() {
