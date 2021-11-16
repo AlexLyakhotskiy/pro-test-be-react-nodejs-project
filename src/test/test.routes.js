@@ -6,7 +6,7 @@ const router = express.Router();
 const { authorize } = require("../auth/authorize.middleware");
 const Test = require("./test.model");
 
-router.get("/:nameTest", authorize, async (req, res, next) => {
+router.get("/:nameTest", async (req, res, next) => {
   try {
     const results = await Test.find({ nameTest: req.params.nameTest });
     res.json({
