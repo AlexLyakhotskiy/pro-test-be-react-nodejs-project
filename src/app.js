@@ -55,7 +55,6 @@ class Server {
 
   initRoutes() {
     this.server.use("/auth", null);
-    this.server.use("/", null);
     this.server.use("/test", null);
   }
 
