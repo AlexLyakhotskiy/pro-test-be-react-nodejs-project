@@ -1,9 +1,13 @@
-const express = require('express');
-const path = require('path');
-const morgan = require('morgan');
-const mongoose = require('mongoose');
-const cors = require('cors');
-const dotenv = require('dotenv');
+/** @format */
+
+const express = require("express");
+const path = require("path");
+const morgan = require("morgan");
+const mongoose = require("mongoose");
+const cors = require("cors");
+const dotenv = require("dotenv");
+
+const authRoutes = require("./auth/auth.routes");
 
 class Server {
   async start() {
@@ -21,7 +25,7 @@ class Server {
   }
 
   initConfig() {
-    dotenv.config({ path: path.join(__dirname, '../.env') });
+    dotenv.config({ path: path.join(__dirname, "../.env") });
   }
 
   async initDatabase() {
@@ -32,7 +36,7 @@ class Server {
         useUnifiedTopology: true,
       });
 
-      console.log('Database connection successful');
+      console.log("Database connection successful");
     } catch (err) {
       console.log(err);
       process.exit(1);
@@ -41,18 +45,18 @@ class Server {
 
   initMiddlewares() {
     const formatsLogger =
-      this.server.get('env') === 'development' ? 'dev' : 'short';
+      this.server.get("env") === "development" ? "dev" : "short";
 
     this.server.use(express.json());
-    this.server.use(express.static('public'));
+    this.server.use(express.static("public"));
     this.server.use(morgan(formatsLogger));
-    this.server.use(cors({ origin: '*' }));
+    this.server.use(cors({ origin: "*" }));
   }
 
   initRoutes() {
-    this.server.use('/auth', null);
+    this.server.use("/auth", null);
     this.server.use("/", null);
-    this.server.use('/test', null);
+    this.server.use("/test", null);
   }
 
   initErrorHandling() {
