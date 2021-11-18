@@ -1,8 +1,8 @@
 const {
   Types: { ObjectId },
-} = require('mongoose');
+} = require("mongoose");
 
-function validate(schema, reqPart = 'body') {
+function validate(schema, reqPart = "body") {
   return (req, res, next) => {
     const validationResult = schema.validate(req[reqPart], {
       stripUnknown: true,
@@ -23,7 +23,7 @@ function validateId(req, res, next) {
   } = req;
 
   if (!ObjectId.isValid(contactId)) {
-    return res.status(400).send('Your id is not valid');
+    return res.status(400).send("Your id is not valid");
   }
 
   next();

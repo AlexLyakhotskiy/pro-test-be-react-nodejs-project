@@ -14,4 +14,16 @@ async function getTests(req) {
   return newTest;
 }
 
-module.exports = { getTests };
+async function getResult(nameTest, userAnswers) {
+  const test = await Test.find({ nameTest });
+  let correctAnswers = 0;
+  userAnswers.forEach((userItem) => {
+    const question = test.find((item) => item.question === userItem.question);
+    if (userItem.rightAnswer === question.rightAnswer) {
+      correctAnswers += 1;
+    }
+  });
+  return { correctAnswers };
+}
+
+module.exports = { getTests, getResult };
