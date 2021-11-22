@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken');
 const { Unauthorized } = require('http-errors');
+
 const User = require('./auth.model');
 
 exports.authorize = async function authorize(req, res, next) {
@@ -18,8 +19,12 @@ exports.authorize = async function authorize(req, res, next) {
       throw new Unauthorized();
     }
 
+    if (user.token !== token) {
+      await User.findByIdAndUpdate(userId, { token: null });
+      throw new Unauthorized();
+    }
+
     req.user = user;
-    req.token = token;
 
     next();
   } catch (err) {
