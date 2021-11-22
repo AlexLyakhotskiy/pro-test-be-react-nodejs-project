@@ -1,10 +1,12 @@
-const { Conflict, Unauthorized, BadRequest, NotFound } = require('http-errors');
+const { Conflict, Unauthorized } = require('http-errors');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const User = require('./auth.model');
 
-async function signUp(userCreateParams) {
-  const { email, password } = userCreateParams;
+const User = require('./auth.model');
+const { prepareUser, prepareUserWithToken } = require('./users.serializer');
+
+async function signUp(req, res, next) {
+  const { email, password } = req.body;
 
   const existingUser = await User.findOne({ email });
   if (existingUser) {
@@ -14,15 +16,15 @@ async function signUp(userCreateParams) {
   const hashedPassword = await bcrypt.hash(password, 2);
 
   const newUser = await User.create({
-    ...userCreateParams,
+    ...req.body,
     password: hashedPassword,
   });
 
-  return newUser;
+  res.status(201).send(prepareUser(newUser));
 }
 
-async function signIn(signInParams) {
-  const { email, password } = signInParams;
+async function signIn(req, res, next) {
+  const { email, password } = req.body;
 
   const user = await User.findOne({ email });
   if (!user) {
@@ -35,11 +37,19 @@ async function signIn(signInParams) {
   }
 
   const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET);
+  await User.findByIdAndUpdate(user._id, { token });
 
-  return { user, token };
+  res.status(200).send(prepareUserWithToken({ user, token }));
+}
+
+async function logout(req, res, next) {
+  const { _id } = req.user;
+  await User.findByIdAndUpdate(_id, { token: null });
+  res.status(204).send('No Content');
 }
 
 module.exports = {
   signUp,
   signIn,
+  logout,
 };
